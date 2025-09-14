@@ -19,12 +19,19 @@ export default function HotelsPage() {
   const [adults, setAdults] = useState(1)
   const [children, setChildren] = useState(0)
   const [activeField, setActiveField] = useState<string | null>(null)
+  const [activeDateField, setActiveDateField] = useState<'checkin' | 'checkout' | null>(null)
   const [isSearchHidden, setIsSearchHidden] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
   const [showRoomMatch, setShowRoomMatch] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
 
   const totalGuests = adults + children
+
+  // Handle mounting to prevent hydration issues
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Mock bookings data for room match overlay
   const mockBookings: LegacyBooking[] = [
@@ -73,6 +80,8 @@ export default function HotelsPage() {
   ]
 
   useEffect(() => {
+    if (!isMounted) return
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       
@@ -85,9 +94,12 @@ export default function HotelsPage() {
       }
     }
 
+    // Set initial scroll state
+    handleScroll()
+
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [isMounted])
 
   // Handle click outside to close active field
   useEffect(() => {
@@ -141,13 +153,16 @@ export default function HotelsPage() {
   const handleFieldClick = (field: string) => {
     if (field === 'checkin' || field === 'checkout') {
       setActiveField('dates')
+      setActiveDateField(field as 'checkin' | 'checkout')
     } else {
       setActiveField(field)
+      setActiveDateField(null)
     }
   }
 
   const handleClose = () => {
     setActiveField(null)
+    setActiveDateField(null)
   }
 
   const handleDateRangeChange = (dates: [Date | null, Date | null] | null) => {
@@ -223,7 +238,7 @@ export default function HotelsPage() {
   return (
     <div className="min-h-screen bg-white pt-16">
       <section className={`bg-gray-100 border-b border-gray-200 sticky top-16 z-40 transition-all duration-300 ${
-        isSearchHidden ? '-translate-y-full' : 'translate-y-0'
+        isMounted && isSearchHidden ? '-translate-y-full' : 'translate-y-0'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-center">
@@ -265,7 +280,7 @@ export default function HotelsPage() {
                   
                   <div 
                     className={`flex-1 flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-200 relative ${
-                      activeField === 'dates'
+                      activeDateField === 'checkin'
                         ? 'bg-white shadow-md border border-gray-200 rounded-lg' 
                         : activeField 
                           ? 'bg-gray-100 hover:bg-gray-200' 
@@ -296,7 +311,7 @@ export default function HotelsPage() {
                   
                   <div 
                     className={`flex-1 flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-200 relative ${
-                      activeField === 'dates'
+                      activeDateField === 'checkout'
                         ? 'bg-white shadow-md border border-gray-200 rounded-lg' 
                         : activeField 
                           ? 'bg-gray-100 hover:bg-gray-200' 
@@ -358,7 +373,7 @@ export default function HotelsPage() {
                 </div>
                 
                 {/* Single Date Picker for both dates */}
-                {activeField === 'dates' && (
+                {activeDateField && (
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[60]">
                     <DatePicker
                       selected={checkInDate}

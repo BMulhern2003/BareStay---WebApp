@@ -1,14 +1,30 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
+import { hotelSearchSchema, createValidationErrorResponse } from '@/lib/validations'
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
-    const cityName = searchParams.get('city_id') // This is actually city name from our search
-    const countryId = searchParams.get('country_id')
-    const checkInDate = searchParams.get('check_in_date')
-    const checkOutDate = searchParams.get('check_out_date')
-    const numGuests = searchParams.get('num_guests')
+    
+    // ✅ Validate query parameters with Zod
+    const queryParams = {
+      city_id: searchParams.get('city_id') || undefined,
+      country_id: searchParams.get('country_id') || undefined,
+      check_in_date: searchParams.get('check_in_date') || undefined,
+      check_out_date: searchParams.get('check_out_date') || undefined,
+      num_guests: searchParams.get('num_guests') || undefined
+    }
+    
+    const validationResult = hotelSearchSchema.safeParse(queryParams)
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        createValidationErrorResponse(validationResult.error.issues),
+        { status: 400 }
+      )
+    }
+    
+    const { city_id: cityName, country_id: countryId, check_in_date: checkInDate, check_out_date: checkOutDate, num_guests: numGuests } = validationResult.data
     
     const supabase = createAdminClient()
     

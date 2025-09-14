@@ -15,6 +15,7 @@ export default function BookingsPage() {
   const [adults, setAdults] = useState(1)
   const [children, setChildren] = useState(0)
   const [activeField, setActiveField] = useState<string | null>(null)
+  const [activeDateField, setActiveDateField] = useState<'checkin' | 'checkout' | null>(null)
   const [showRoomMatch, setShowRoomMatch] = useState(false)
   const [isSearchHidden, setIsSearchHidden] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
@@ -97,13 +98,16 @@ export default function BookingsPage() {
   const handleFieldClick = (field: string) => {
     if (field === 'checkin' || field === 'checkout') {
       setActiveField('dates')
+      setActiveDateField(field as 'checkin' | 'checkout')
     } else {
       setActiveField(field)
+      setActiveDateField(null)
     }
   }
 
   const handleClose = () => {
     setActiveField(null)
+    setActiveDateField(null)
   }
 
   const handleDateRangeChange = (dates: [Date | null, Date | null] | null) => {
@@ -220,7 +224,7 @@ export default function BookingsPage() {
                   
                   <div 
                     className={`flex-1 flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-200 relative ${
-                      activeField === 'dates'
+                      activeDateField === 'checkin'
                         ? 'bg-white shadow-md border border-gray-200 rounded-lg' 
                         : activeField 
                           ? 'bg-gray-100 hover:bg-gray-200' 
@@ -251,7 +255,7 @@ export default function BookingsPage() {
                   
                   <div 
                     className={`flex-1 flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-200 relative ${
-                      activeField === 'dates'
+                      activeDateField === 'checkout'
                         ? 'bg-white shadow-md border border-gray-200 rounded-lg' 
                         : activeField 
                           ? 'bg-gray-100 hover:bg-gray-200' 
@@ -313,7 +317,7 @@ export default function BookingsPage() {
                 </div>
                 
                 {/* Single Date Picker for both dates */}
-                {activeField === 'dates' && (
+                {activeDateField && (
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[60]">
                     <DatePicker
                       selected={checkInDate}

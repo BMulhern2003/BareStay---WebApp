@@ -36,6 +36,8 @@ const translations = {
     'nav.host_experience': 'Host an experience',
     'nav.help': 'Help',
     'nav.sign_out': 'Sign Out',
+    'nav.my_bookings': 'My Bookings',
+    'nav.profile': 'Profile',
     
     // Language names
     'lang.english': 'English',
@@ -221,6 +223,8 @@ const translations = {
     'nav.host_experience': 'จัดประสบการณ์',
     'nav.help': 'ช่วยเหลือ',
     'nav.sign_out': 'ออกจากระบบ',
+    'nav.my_bookings': 'การจองของฉัน',
+    'nav.profile': 'โปรไฟล์',
     
     // Language names
     'lang.english': 'English',
@@ -406,6 +410,8 @@ const translations = {
     'nav.host_experience': 'Hosting pengalaman',
     'nav.help': 'Bantuan',
     'nav.sign_out': 'Keluar',
+    'nav.my_bookings': 'Pemesanan Saya',
+    'nav.profile': 'Profil',
     
     // Language names
     'lang.english': 'English',

@@ -6,16 +6,25 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import { useState, useEffect, useRef } from 'react'
 
 export function Navigation() {
-  const { user, signOut } = useAuth()
+  const { user, profile, signOut } = useAuth()
   const { language, setLanguage, currency, setCurrency, t } = useLanguage()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showLanguageMenu, setShowLanguageMenu] = useState(false)
   const [showCurrencyMenu, setShowCurrencyMenu] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const languageMenuRef = useRef<HTMLDivElement>(null)
   const currencyMenuRef = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+
+  // Handle mounting to prevent hydration issues
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   useEffect(() => {
+    if (!isMounted) return
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       
@@ -23,9 +32,12 @@ export function Navigation() {
       setIsScrolled(currentScrollY > 50)
     }
 
+    // Set initial scroll state
+    handleScroll()
+
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [isMounted])
 
   // Handle click outside to close menus
   useEffect(() => {
@@ -36,16 +48,20 @@ export function Navigation() {
       if (currencyMenuRef.current && !currencyMenuRef.current.contains(event.target as Node)) {
         setShowCurrencyMenu(false)
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false)
+      }
     }
 
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setShowLanguageMenu(false)
         setShowCurrencyMenu(false)
+        setShowUserMenu(false)
       }
     }
 
-    if (showLanguageMenu || showCurrencyMenu) {
+    if (showLanguageMenu || showCurrencyMenu || showUserMenu) {
       document.addEventListener('mousedown', handleClickOutside)
       document.addEventListener('keydown', handleEscapeKey)
     }
@@ -54,7 +70,7 @@ export function Navigation() {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('keydown', handleEscapeKey)
     }
-  }, [showLanguageMenu, showCurrencyMenu])
+  }, [showLanguageMenu, showCurrencyMenu, showUserMenu])
 
   const handleLanguageSelect = (newLanguage: 'en' | 'th' | 'id') => {
     setLanguage(newLanguage)
@@ -105,26 +121,35 @@ export function Navigation() {
     }
   }
 
+  const getDisplayName = (fullName: string | null | undefined, email: string) => {
+    if (fullName) {
+      // Use full name if available
+      return fullName
+    }
+    // Fallback to email if no full name
+    return email
+  }
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 bg-gray-100 transition-all duration-300 ${
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`flex justify-between transition-all duration-200 ${
-          isScrolled ? 'h-14' : 'h-16'
+          isMounted && isScrolled ? 'h-14' : 'h-16'
         }`}>
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/hotels" className="flex items-center gap-2">
               <div className={`bg-[var(--color-brand)] rounded-full flex items-center justify-center transition-all duration-200 ${
-                isScrolled ? 'w-6 h-6' : 'w-8 h-8'
+                isMounted && isScrolled ? 'w-6 h-6' : 'w-8 h-8'
               }`}>
                 <span className={`text-white font-bold transition-all duration-200 ${
-                  isScrolled ? 'text-xs' : 'text-sm'
+                  isMounted && isScrolled ? 'text-xs' : 'text-sm'
                 }`}>B</span>
               </div>
               <span className={`font-bold text-[var(--color-brand)] transition-all duration-200 ${
-                isScrolled ? 'text-lg' : 'text-xl'
+                isMounted && isScrolled ? 'text-lg' : 'text-xl'
               }`}>
                 BareStay
               </span>
@@ -201,15 +226,86 @@ export function Navigation() {
           <div className="flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-4">
+                {/* User Name Display */}
                 <span className="text-sm text-gray-700 hidden sm:block">
-                  {user.email}
+                  {getDisplayName(profile?.full_name, user.email)}
                 </span>
-                <button
-                  onClick={() => signOut()}
-                  className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"
-                >
-                  {t('nav.sign_out')}
-                </button>
+                
+                {/* User Dropdown Menu */}
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center gap-2 p-2 rounded-full border border-gray-300 hover:shadow-md hover:bg-gray-200 transition-all duration-200"
+                  >
+                    <svg
+                      className="w-4 h-4 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    <svg
+                      className="w-3 h-3 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* User Dropdown Menu */}
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                      <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-100">
+                        {getDisplayName(profile?.full_name, user.email)}
+                      </div>
+                      <Link
+                        href="/bookings"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        {t('nav.my_bookings')}
+                      </Link>
+                      <Link
+                        href="/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        {t('nav.profile')}
+                      </Link>
+                      <hr className="my-1" />
+                      <button
+                        onClick={async () => {
+                          try {
+                            const { error } = await signOut()
+                            if (error) {
+                              console.error('Sign out error:', error)
+                            }
+                            setShowUserMenu(false)
+                          } catch (error) {
+                            console.error('Sign out error:', error)
+                            setShowUserMenu(false)
+                          }
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        {t('nav.sign_out')}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="flex items-center space-x-4">
@@ -364,7 +460,7 @@ export function Navigation() {
                   )}
                 </div>
 
-                {/* User Menu Button */}
+                {/* User Menu Button for non-authenticated users */}
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
@@ -398,7 +494,7 @@ export function Navigation() {
                     </svg>
                   </button>
 
-                  {/* Dropdown Menu */}
+                  {/* Dropdown Menu for non-authenticated users */}
                   {showUserMenu && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                       <Link
