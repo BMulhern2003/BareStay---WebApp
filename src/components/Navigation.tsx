@@ -31,7 +31,7 @@ export function Navigation() {
         }`}>
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/hotels" className="flex items-center gap-2">
               <div className={`bg-[var(--color-brand)] rounded-full flex items-center justify-center transition-all duration-200 ${
                 isScrolled ? 'w-6 h-6' : 'w-8 h-8'
               }`}>
@@ -50,7 +50,7 @@ export function Navigation() {
           {/* Center Navigation Tabs */}
           <div className="hidden md:flex items-center space-x-8">
             <Link
-              href="/bookings"
+              href="/hotels"
               className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-gray-200"
             >
               <svg

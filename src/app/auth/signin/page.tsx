@@ -25,7 +25,7 @@ export default function SignInPage() {
     if (error) {
       setError(error.message)
     } else {
-      router.push('/bookings')
+      router.push('/hotels')
     }
     
     setLoading(false)

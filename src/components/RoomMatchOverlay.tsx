@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Booking } from '@/types'
+import { LegacyBooking } from '@/types'
 
 interface RoomMatchOverlayProps {
   isOpen: boolean
   onClose: () => void
-  bookings: Booking[]
+  bookings: LegacyBooking[]
 }
 
 export function RoomMatchOverlay({ isOpen, onClose, bookings }: RoomMatchOverlayProps) {

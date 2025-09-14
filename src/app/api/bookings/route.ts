@@ -14,7 +14,7 @@ export async function GET() {
       .from('bookings')
       .select('*')
       .eq('status', 'available')
-      .order('date', { ascending: true })
+      .order('created_at', { ascending: true })
 
     if (error) {
       console.error('Supabase error:', error)

@@ -3,11 +3,11 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { Booking } from '@/types'
+import { LegacyBooking } from '@/types'
 
 export default function AdminPage() {
   const { user } = useAuth()
-  const [bookings, setBookings] = useState<Booking[]>([])
+  const [bookings, setBookings] = useState<LegacyBooking[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

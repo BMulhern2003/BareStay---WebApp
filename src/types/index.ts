@@ -1,14 +1,8 @@
-export interface User {
-  id: string
-  email: string
-  name?: string
-  role: 'USER' | 'ADMIN'
-  is_verified: boolean
-  created_at: string
-  updated_at: string
-}
+// Re-export all hotel types for backward compatibility
+export * from './hotel'
 
-export interface Booking {
+// Legacy types for backward compatibility (deprecated)
+export interface LegacyBooking {
   id: string
   title: string
   description?: string
@@ -24,7 +18,7 @@ export interface Booking {
   user_id?: string
 }
 
-export interface BookingRequest {
+export interface LegacyBookingRequest {
   booking_id: string
   user_id: string
   seats: number
@@ -33,6 +27,7 @@ export interface BookingRequest {
   updated_at: string
 }
 
-export type BookingStatus = 'available' | 'booked' | 'cancelled'
+// Type aliases for backward compatibility
+export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'checked_out' | 'cancelled' | 'no_show'
 export type RequestStatus = 'pending' | 'confirmed' | 'cancelled'
-export type UserRole = 'USER' | 'ADMIN' 
+export type UserRole = 'USER' | 'ADMIN' | 'HOTEL_MANAGER'

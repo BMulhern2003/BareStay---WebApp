@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Booking } from '@/types'
+import { LegacyBooking } from '@/types'
 import { useAuth } from '@/hooks/useAuth'
 
 interface BookingCardProps {
-  booking: Booking
+  booking: LegacyBooking
 }
 
 export function BookingCard({ booking }: BookingCardProps) {
@@ -78,3 +78,7 @@ export function BookingCard({ booking }: BookingCardProps) {
     </div>
   )
 }
+
+// Export both components for flexibility
+export { HotelCard } from './HotelCard'
+export { RoomTypeCard } from './RoomTypeCard'

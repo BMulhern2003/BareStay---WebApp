@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Booking } from '@/types'
+import { LegacyBooking } from '@/types'
 
 export function useBookings() {
-  const [bookings, setBookings] = useState<Booking[]>([])
+  const [bookings, setBookings] = useState<LegacyBooking[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
