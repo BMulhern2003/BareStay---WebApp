@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
-import { Navigation } from '@/components/Navigation'
 
 export default function SignInPage() {
   const [email, setEmail] = useState('')
@@ -34,7 +33,6 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
       
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">

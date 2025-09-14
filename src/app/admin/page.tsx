@@ -3,7 +3,6 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { Navigation } from '@/components/Navigation'
 import { Booking } from '@/types'
 
 export default function AdminPage() {
@@ -33,7 +32,6 @@ export default function AdminPage() {
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navigation />
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="text-center">
@@ -48,7 +46,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
       
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
