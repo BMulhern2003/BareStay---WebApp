@@ -169,6 +169,32 @@ export function useAuth() {
     }
   }
 
+  const signInWithGoogle = async () => {
+    try {
+      console.log('Initiating Google OAuth with redirect:', `${window.location.origin}/auth/callback`)
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+      
+      console.log('OAuth response:', { data, error })
+      
+      if (error) {
+        console.error('OAuth error:', error)
+        return { error }
+      }
+      
+      console.log('OAuth initiated successfully')
+      return { error: null }
+    } catch (error) {
+      console.error('Unexpected error in signInWithGoogle:', error)
+      return { error: { message: 'Failed to initiate Google sign-in' } }
+    }
+  }
+
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     return { error }
@@ -180,6 +206,7 @@ export function useAuth() {
     loading,
     signIn,
     signUp,
+    signInWithGoogle,
     signOut,
   }
 }
