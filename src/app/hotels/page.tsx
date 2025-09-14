@@ -5,11 +5,14 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useHotels, useHotelSearch } from '@/hooks/useHotels'
 import { SmallHotelCard } from '@/components/SmallHotelCard'
-import { HotelSearchFilters, HotelWithDetails } from '@/types'
+import { RoomMatchOverlay } from '@/components/RoomMatchOverlay'
+import { HotelSearchFilters, HotelWithDetails, LegacyBooking } from '@/types'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function HotelsPage() {
   const { hotels, loading, error } = useHotels()
   const { searchResults, loading: searchLoading, search } = useHotelSearch()
+  const { t } = useLanguage()
   const [query, setQuery] = useState('')
   const [checkInDate, setCheckInDate] = useState<Date | null>(null)
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null)
@@ -18,26 +21,68 @@ export default function HotelsPage() {
   const [activeField, setActiveField] = useState<string | null>(null)
   const [isSearchHidden, setIsSearchHidden] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
+  const [showRoomMatch, setShowRoomMatch] = useState(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
 
   const totalGuests = adults + children
 
-  useEffect(() => {
-    let lastScrollY = window.scrollY
+  // Mock bookings data for room match overlay
+  const mockBookings: LegacyBooking[] = [
+    {
+      id: '1',
+      title: 'Luxury Beach Villa',
+      description: 'Beautiful beachfront villa with stunning ocean views',
+      date: '2024-02-15',
+      time: '14:00',
+      location: 'Bali, Indonesia',
+      price: 450,
+      max_seats: 4,
+      available_seats: 2,
+      status: 'available',
+      created_at: '2024-01-15T10:00:00Z',
+      updated_at: '2024-01-15T10:00:00Z'
+    },
+    {
+      id: '2',
+      title: 'Modern City Apartment',
+      description: 'Stylish apartment in the heart of Bangkok',
+      date: '2024-02-18',
+      time: '15:00',
+      location: 'Bangkok, Thailand',
+      price: 280,
+      max_seats: 2,
+      available_seats: 1,
+      status: 'available',
+      created_at: '2024-01-18T10:00:00Z',
+      updated_at: '2024-01-18T10:00:00Z'
+    },
+    {
+      id: '3',
+      title: 'Mountain Retreat',
+      description: 'Peaceful mountain retreat with nature views',
+      date: '2024-02-25',
+      time: '16:00',
+      location: 'Chiang Mai, Thailand',
+      price: 320,
+      max_seats: 6,
+      available_seats: 3,
+      status: 'available',
+      created_at: '2024-01-25T10:00:00Z',
+      updated_at: '2024-01-25T10:00:00Z'
+    }
+  ]
 
+  useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       
-      // Show/hide search area based on scroll direction
-      if (currentScrollY > lastScrollY && currentScrollY > 150) {
-        // Scrolling down - hide search area
+      // Hide search area when scrolling down past 50px
+      // Only show it again when scrolling back to the very top (0px)
+      if (currentScrollY > 50) {
         setIsSearchHidden(true)
       } else {
-        // Scrolling up - show search area
         setIsSearchHidden(false)
       }
-      
-      lastScrollY = currentScrollY
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -199,18 +244,18 @@ export default function HotelsPage() {
                     onClick={() => handleFieldClick('where')}
                   >
                     <div className="flex flex-col flex-1">
-                      <span className="text-sm font-semibold text-gray-900">Where</span>
+                      <span className="text-sm font-semibold text-gray-900">{t('hotels.where')}</span>
                       {activeField === 'where' ? (
                         <input
                           value={query}
                           onChange={(e) => setQuery(e.target.value)}
-                          placeholder="Search destinations"
+                          placeholder={t('hotels.search_destinations')}
                           className="bg-transparent outline-none text-sm text-gray-600 placeholder:text-gray-400 w-full"
                           autoFocus
                         />
                       ) : (
                         <span className="text-sm text-gray-500">
-                          {query || 'Search destinations'}
+                          {query || t('hotels.search_destinations')}
                         </span>
                       )}
                     </div>
@@ -229,9 +274,9 @@ export default function HotelsPage() {
                     onClick={() => handleFieldClick('checkin')}
                   >
                     <div className="flex flex-col flex-1">
-                      <span className="text-sm font-semibold text-gray-900">Check in</span>
+                      <span className="text-sm font-semibold text-gray-900">{t('hotels.check_in')}</span>
                       <span className="text-sm text-gray-500">
-                        {checkInDate ? formatDate(checkInDate) : 'Add dates'}
+                        {checkInDate ? formatDate(checkInDate) : t('hotels.add_dates')}
                       </span>
                     </div>
                     {checkInDate && (
@@ -260,9 +305,9 @@ export default function HotelsPage() {
                     onClick={() => handleFieldClick('checkout')}
                   >
                     <div className="flex flex-col flex-1">
-                      <span className="text-sm font-semibold text-gray-900">Check out</span>
+                      <span className="text-sm font-semibold text-gray-900">{t('hotels.check_out')}</span>
                       <span className="text-sm text-gray-500">
-                        {checkOutDate ? formatDate(checkOutDate) : 'Add dates'}
+                        {checkOutDate ? formatDate(checkOutDate) : t('hotels.add_dates')}
                       </span>
                     </div>
                     {checkOutDate && (
@@ -291,9 +336,9 @@ export default function HotelsPage() {
                     onClick={() => setActiveField('guests')}
                   >
                     <div className="flex flex-col mr-4">
-                      <span className="text-sm font-semibold text-gray-900">Who</span>
+                      <span className="text-sm font-semibold text-gray-900">{t('hotels.who')}</span>
                       <span className="text-sm text-gray-500">
-                        {totalGuests > 1 ? `${totalGuests} guests` : 'Add guests'}
+                        {totalGuests > 1 ? `${totalGuests} ${t('hotels.guests')}` : t('hotels.add_guests')}
                       </span>
                     </div>
                     <button 
@@ -306,7 +351,7 @@ export default function HotelsPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                       {activeField && (
-                        <span className="ml-2 font-medium text-sm">Search</span>
+                        <span className="ml-2 font-medium text-sm">{t('hotels.search')}</span>
                       )}
                     </button>
                   </div>
@@ -333,7 +378,7 @@ export default function HotelsPage() {
                 {/* Suggested Destinations Dropdown */}
                 {activeField === 'where' && (
                   <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 p-4 z-[60]">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4">Suggested destinations</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-4">{t('hotels.suggested_destinations')}</h3>
                     <div className="space-y-3">
                       <div 
                         className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
@@ -396,13 +441,13 @@ export default function HotelsPage() {
                 {/* Guests Dropdown */}
                 {activeField === 'guests' && (
                   <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 p-4 z-[60]">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4">Guests</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-4">{t('hotels.guests')}</h3>
                     <div className="space-y-4">
                       {/* Adults */}
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-gray-900">Adults</div>
-                          <div className="text-sm text-gray-500">Ages 13 or above</div>
+                          <div className="font-medium text-gray-900">{t('hotels.adults')}</div>
+                          <div className="text-sm text-gray-500">{t('hotels.ages_13_above')}</div>
                         </div>
                         <div className="flex items-center gap-3">
                           <button
@@ -429,8 +474,8 @@ export default function HotelsPage() {
                       {/* Children */}
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-gray-900">Children</div>
-                          <div className="text-sm text-gray-500">Ages 2-12</div>
+                          <div className="font-medium text-gray-900">{t('hotels.children')}</div>
+                          <div className="text-sm text-gray-500">{t('hotels.ages_2_12')}</div>
                         </div>
                         <div className="flex items-center gap-3">
                           <button
@@ -467,12 +512,12 @@ export default function HotelsPage() {
           {isLoading ? (
             <div className="text-center py-20">
               <div className="inline-block animate-spin rounded-full h-10 w-10 border-2 border-[var(--color-brand)] border-t-transparent mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading hotels...</p>
+              <p className="mt-4 text-gray-600">{t('hotels.loading_hotels')}</p>
             </div>
           ) : displayHotels.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-gray-500 text-lg">
-                {hasSearched ? 'No hotels match your search criteria.' : 'Search for hotels using the form above.'}
+                {hasSearched ? t('hotels.no_hotels_found') : t('hotels.search_using_form')}
               </p>
             </div>
           ) : (
@@ -485,7 +530,7 @@ export default function HotelsPage() {
                       {location}
                     </h2>
                     <p className="text-sm text-gray-500 mt-1">
-                      {groupedHotels[location].length} hotel{groupedHotels[location].length !== 1 ? 's' : ''} available
+                      {groupedHotels[location].length} {t('hotels.available')}
                     </p>
                   </div>
                   
@@ -507,6 +552,23 @@ export default function HotelsPage() {
           )}
         </div>
       </main>
+
+      {/* Room Match Button - Fixed Bottom Right */}
+      <button
+        onClick={() => setShowRoomMatch(true)}
+        className="fixed bottom-6 right-6 bg-[var(--color-brand)] text-white p-4 rounded-full shadow-lg hover:bg-[var(--color-brand-600)] transition-all duration-200 hover:scale-110 active:scale-95 z-40"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </button>
+
+      {/* Room Match Overlay */}
+      <RoomMatchOverlay 
+        isOpen={showRoomMatch} 
+        onClose={() => setShowRoomMatch(false)} 
+        bookings={mockBookings}
+      />
     </div>
   )
 }

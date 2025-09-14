@@ -2,12 +2,18 @@
 
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
-import { useState, useEffect } from 'react'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { useState, useEffect, useRef } from 'react'
 
 export function Navigation() {
   const { user, signOut } = useAuth()
+  const { language, setLanguage, currency, setCurrency, t } = useLanguage()
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false)
+  const [showCurrencyMenu, setShowCurrencyMenu] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const languageMenuRef = useRef<HTMLDivElement>(null)
+  const currencyMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +26,84 @@ export function Navigation() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Handle click outside to close menus
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target as Node)) {
+        setShowLanguageMenu(false)
+      }
+      if (currencyMenuRef.current && !currencyMenuRef.current.contains(event.target as Node)) {
+        setShowCurrencyMenu(false)
+      }
+    }
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowLanguageMenu(false)
+        setShowCurrencyMenu(false)
+      }
+    }
+
+    if (showLanguageMenu || showCurrencyMenu) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleEscapeKey)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [showLanguageMenu, showCurrencyMenu])
+
+  const handleLanguageSelect = (newLanguage: 'en' | 'th' | 'id') => {
+    setLanguage(newLanguage)
+    setShowLanguageMenu(false)
+  }
+
+  const handleCurrencySelect = (newCurrency: 'GBP' | 'THB' | 'IDR') => {
+    setCurrency(newCurrency)
+    setShowCurrencyMenu(false)
+  }
+
+  const getLanguageDisplayName = (lang: 'en' | 'th' | 'id') => {
+    switch (lang) {
+      case 'en':
+        return t('lang.english')
+      case 'th':
+        return t('lang.thai')
+      case 'id':
+        return t('lang.indonesian')
+      default:
+        return t('lang.english')
+    }
+  }
+
+  const getCurrencyDisplayName = (curr: 'GBP' | 'THB' | 'IDR') => {
+    switch (curr) {
+      case 'GBP':
+        return t('currency.gbp')
+      case 'THB':
+        return t('currency.thb')
+      case 'IDR':
+        return t('currency.idr')
+      default:
+        return t('currency.gbp')
+    }
+  }
+
+  const getCurrencySymbol = (curr: 'GBP' | 'THB' | 'IDR') => {
+    switch (curr) {
+      case 'GBP':
+        return '£'
+      case 'THB':
+        return '฿'
+      case 'IDR':
+        return 'Rp'
+      default:
+        return '£'
+    }
+  }
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 bg-gray-100 transition-all duration-300 ${
@@ -66,7 +150,7 @@ export function Navigation() {
                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                 />
               </svg>
-              Homes
+              {t('nav.homes')}
             </Link>
 
             <Link
@@ -86,7 +170,7 @@ export function Navigation() {
                   d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
                 />
               </svg>
-              Experiences
+              {t('nav.experiences')}
               <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full">
                 NEW
               </span>
@@ -109,7 +193,7 @@ export function Navigation() {
                   d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                 />
               </svg>
-              Become a Provider
+              {t('nav.become_provider')}
             </Link>
           </div>
 
@@ -124,27 +208,161 @@ export function Navigation() {
                   onClick={() => signOut()}
                   className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"
                 >
-                  Sign Out
+                  {t('nav.sign_out')}
                 </button>
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                {/* Globe Icon */}
-                <button className="p-2 rounded-full hover:bg-gray-200 transition-colors">
-                  <svg
-                    className="w-4 h-4 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                {/* Currency Selector */}
+                <div className="relative" ref={currencyMenuRef}>
+                  <button 
+                    onClick={() => setShowCurrencyMenu(!showCurrencyMenu)}
+                    className="p-2 rounded-full hover:bg-gray-200 transition-colors flex items-center gap-1"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"
-                    />
-                  </svg>
-                </button>
+                    <span className="text-lg font-semibold text-gray-700">
+                      {getCurrencySymbol(currency)}
+                    </span>
+                    <span className="text-xs text-gray-600 hidden sm:block">
+                      {getCurrencyDisplayName(currency)}
+                    </span>
+                  </button>
+
+                  {/* Currency Dropdown Menu */}
+                  {showCurrencyMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                      <button
+                        onClick={() => handleCurrencySelect('GBP')}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                          currency === 'GBP' 
+                            ? 'bg-gray-100 text-gray-900' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-semibold">£</span>
+                          <span>{t('currency.gbp')}</span>
+                        </div>
+                        {currency === 'GBP' && (
+                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleCurrencySelect('THB')}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                          currency === 'THB' 
+                            ? 'bg-gray-100 text-gray-900' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-semibold">฿</span>
+                          <span>{t('currency.thb')}</span>
+                        </div>
+                        {currency === 'THB' && (
+                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleCurrencySelect('IDR')}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                          currency === 'IDR' 
+                            ? 'bg-gray-100 text-gray-900' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-semibold">Rp</span>
+                          <span>{t('currency.idr')}</span>
+                        </div>
+                        {currency === 'IDR' && (
+                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Language Selector */}
+                <div className="relative" ref={languageMenuRef}>
+                  <button 
+                    onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                    className="p-2 rounded-full hover:bg-gray-200 transition-colors flex items-center gap-1"
+                  >
+                    <svg
+                      className="w-4 h-4 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"
+                      />
+                    </svg>
+                    <span className="text-xs text-gray-600 hidden sm:block">
+                      {getLanguageDisplayName(language)}
+                    </span>
+                  </button>
+
+                  {/* Language Dropdown Menu */}
+                  {showLanguageMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                      <button
+                        onClick={() => handleLanguageSelect('en')}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                          language === 'en' 
+                            ? 'bg-gray-100 text-gray-900' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span>{t('lang.english')}</span>
+                        {language === 'en' && (
+                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleLanguageSelect('th')}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                          language === 'th' 
+                            ? 'bg-gray-100 text-gray-900' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span>{t('lang.thai')}</span>
+                        {language === 'th' && (
+                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleLanguageSelect('id')}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                          language === 'id' 
+                            ? 'bg-gray-100 text-gray-900' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span>{t('lang.indonesian')}</span>
+                        {language === 'id' && (
+                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
 
                 {/* User Menu Button */}
                 <div className="relative">
@@ -188,14 +406,14 @@ export function Navigation() {
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        Sign in
+                        {t('nav.sign_in')}
                       </Link>
                       <Link
                         href="/auth/signup"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        Sign up
+                        {t('nav.sign_up')}
                       </Link>
                       <hr className="my-1" />
                       <Link
@@ -203,21 +421,21 @@ export function Navigation() {
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        Host your home
+                        {t('nav.host_home')}
                       </Link>
                       <Link
                         href="/experiences"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        Host an experience
+                        {t('nav.host_experience')}
                       </Link>
                       <Link
                         href="/help"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        Help
+                        {t('nav.help')}
                       </Link>
                     </div>
                   )}

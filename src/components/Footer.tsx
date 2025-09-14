@@ -1,8 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -18,20 +21,20 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Premium stays and experiences, thoughtfully curated for your next adventure.
+              {t('footer.tagline')}
             </p>
           </div>
 
           {/* Support Section */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{t('footer.support')}</h3>
             <ul className="space-y-3">
               <li>
                 <Link 
                   href="/help" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Help Center
+                  {t('footer.help_center')}
                 </Link>
               </li>
               <li>
@@ -39,7 +42,7 @@ export function Footer() {
                   href="/safety" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Safety Information
+                  {t('footer.safety_info')}
                 </Link>
               </li>
               <li>
@@ -47,7 +50,7 @@ export function Footer() {
                   href="/cancellation" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Cancellation Options
+                  {t('footer.cancellation_options')}
                 </Link>
               </li>
               <li>
@@ -55,7 +58,7 @@ export function Footer() {
                   href="/accessibility" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Accessibility
+                  {t('footer.accessibility')}
                 </Link>
               </li>
             </ul>
@@ -63,14 +66,14 @@ export function Footer() {
 
           {/* Community Section */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Community</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{t('footer.community')}</h3>
             <ul className="space-y-3">
               <li>
                 <Link 
                   href="/become-provider" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Become a Provider
+                  {t('footer.become_provider')}
                 </Link>
               </li>
               <li>
@@ -78,7 +81,7 @@ export function Footer() {
                   href="/experiences" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Host an Experience
+                  {t('footer.host_experience')}
                 </Link>
               </li>
               <li>
@@ -86,7 +89,7 @@ export function Footer() {
                   href="/referrals" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Refer a Friend
+                  {t('footer.refer_friend')}
                 </Link>
               </li>
               <li>
@@ -94,7 +97,7 @@ export function Footer() {
                   href="/community" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Community Guidelines
+                  {t('footer.community_guidelines')}
                 </Link>
               </li>
             </ul>
@@ -102,14 +105,14 @@ export function Footer() {
 
           {/* Company Section */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Company</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{t('footer.company')}</h3>
             <ul className="space-y-3">
               <li>
                 <Link 
                   href="/about" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  About Us
+                  {t('footer.about_us')}
                 </Link>
               </li>
               <li>
@@ -117,7 +120,7 @@ export function Footer() {
                   href="/careers" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Careers
+                  {t('footer.careers')}
                 </Link>
               </li>
               <li>
@@ -125,7 +128,7 @@ export function Footer() {
                   href="/press" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Press
+                  {t('footer.press')}
                 </Link>
               </li>
               <li>
@@ -133,7 +136,7 @@ export function Footer() {
                   href="/contact" 
                   className="text-gray-600 hover:text-[var(--color-brand)] transition-colors text-sm"
                 >
-                  Contact
+                  {t('footer.contact')}
                 </Link>
               </li>
             </ul>
@@ -144,32 +147,32 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-col md:flex-row items-center gap-4 text-sm text-gray-600">
-              <span>© 2024 BareStay, Inc.</span>
+              <span>{t('footer.copyright')}</span>
               <div className="flex items-center gap-4">
                 <Link 
                   href="/privacy" 
                   className="hover:text-[var(--color-brand)] transition-colors"
                 >
-                  Privacy Policy
+                  {t('footer.privacy_policy')}
                 </Link>
                 <Link 
                   href="/terms" 
                   className="hover:text-[var(--color-brand)] transition-colors"
                 >
-                  Terms of Service
+                  {t('footer.terms_of_service')}
                 </Link>
                 <Link 
                   href="/cookies" 
                   className="hover:text-[var(--color-brand)] transition-colors"
                 >
-                  Cookie Policy
+                  {t('footer.cookie_policy')}
                 </Link>
               </div>
             </div>
             
             {/* Social Links */}
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Follow us:</span>
+              <span className="text-sm text-gray-600">{t('footer.follow_us')}</span>
               <div className="flex items-center gap-3">
                 <a 
                   href="#" 
