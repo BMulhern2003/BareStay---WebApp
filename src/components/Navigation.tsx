@@ -172,14 +172,14 @@ export function Navigation() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                 />
               </svg>
-              {t('nav.homes')}
+              {t('nav.hotels')}
             </Link>
 
             <Link
-              href="/experiences"
+              href="/properties"
               className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-gray-200 relative"
             >
               <svg
@@ -192,10 +192,10 @@ export function Navigation() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                 />
               </svg>
-              {t('nav.experiences')}
+              {t('nav.properties')}
               <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full">
                 NEW
               </span>
@@ -224,13 +224,159 @@ export function Navigation() {
 
           {/* Right Side User Menu */}
           <div className="flex items-center space-x-4">
+            {/* Currency Selector - Always Visible */}
+            <div className="relative" ref={currencyMenuRef}>
+              <button 
+                onClick={() => setShowCurrencyMenu(!showCurrencyMenu)}
+                className="p-2 rounded-full hover:bg-gray-200 transition-colors flex items-center gap-1"
+              >
+                <span className="text-lg font-semibold text-gray-700">
+                  {getCurrencySymbol(currency)}
+                </span>
+                <span className="text-xs text-gray-600 hidden sm:block">
+                  {getCurrencyDisplayName(currency)}
+                </span>
+              </button>
+
+              {/* Currency Dropdown Menu */}
+              {showCurrencyMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                  <button
+                    onClick={() => handleCurrencySelect('GBP')}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                      currency === 'GBP' 
+                        ? 'bg-gray-100 text-gray-900' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">£</span>
+                      <span>{t('currency.gbp')}</span>
+                    </div>
+                    {currency === 'GBP' && (
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleCurrencySelect('THB')}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                      currency === 'THB' 
+                        ? 'bg-gray-100 text-gray-900' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">฿</span>
+                      <span>{t('currency.thb')}</span>
+                    </div>
+                    {currency === 'THB' && (
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleCurrencySelect('IDR')}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                      currency === 'IDR' 
+                        ? 'bg-gray-100 text-gray-900' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold">Rp</span>
+                      <span>{t('currency.idr')}</span>
+                    </div>
+                    {currency === 'IDR' && (
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Language Selector - Always Visible */}
+            <div className="relative" ref={languageMenuRef}>
+              <button 
+                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                className="p-2 rounded-full hover:bg-gray-200 transition-colors flex items-center gap-1"
+              >
+                <svg
+                  className="w-4 h-4 text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                  />
+                </svg>
+                <span className="text-xs text-gray-600 hidden sm:block">
+                  {getLanguageDisplayName(language)}
+                </span>
+              </button>
+
+              {/* Language Dropdown Menu */}
+              {showLanguageMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                  <button
+                    onClick={() => handleLanguageSelect('en')}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                      language === 'en' 
+                        ? 'bg-gray-100 text-gray-900' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span>{t('lang.english')}</span>
+                    {language === 'en' && (
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleLanguageSelect('th')}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                      language === 'th' 
+                        ? 'bg-gray-100 text-gray-900' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span>{t('lang.thai')}</span>
+                    {language === 'th' && (
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleLanguageSelect('id')}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                      language === 'id' 
+                        ? 'bg-gray-100 text-gray-900' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span>{t('lang.indonesian')}</span>
+                    {language === 'id' && (
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+
             {user ? (
               <div className="flex items-center space-x-4">
-                {/* User Name Display */}
-                <span className="text-sm text-gray-700 hidden sm:block">
-                  {getDisplayName(profile?.full_name, user.email)}
-                </span>
-                
                 {/* User Dropdown Menu */}
                 <div className="relative" ref={userMenuRef}>
                   <button
@@ -269,7 +415,7 @@ export function Navigation() {
                   {showUserMenu && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                       <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-100">
-                        {getDisplayName(profile?.full_name, user.email)}
+                        {getDisplayName(profile?.full_name, user.email || '')}
                       </div>
                       <Link
                         href="/bookings"
@@ -309,233 +455,19 @@ export function Navigation() {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                {/* Currency Selector */}
-                <div className="relative" ref={currencyMenuRef}>
-                  <button 
-                    onClick={() => setShowCurrencyMenu(!showCurrencyMenu)}
-                    className="p-2 rounded-full hover:bg-gray-200 transition-colors flex items-center gap-1"
-                  >
-                    <span className="text-lg font-semibold text-gray-700">
-                      {getCurrencySymbol(currency)}
-                    </span>
-                    <span className="text-xs text-gray-600 hidden sm:block">
-                      {getCurrencyDisplayName(currency)}
-                    </span>
-                  </button>
-
-                  {/* Currency Dropdown Menu */}
-                  {showCurrencyMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                      <button
-                        onClick={() => handleCurrencySelect('GBP')}
-                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
-                          currency === 'GBP' 
-                            ? 'bg-gray-100 text-gray-900' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-semibold">£</span>
-                          <span>{t('currency.gbp')}</span>
-                        </div>
-                        {currency === 'GBP' && (
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleCurrencySelect('THB')}
-                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
-                          currency === 'THB' 
-                            ? 'bg-gray-100 text-gray-900' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-semibold">฿</span>
-                          <span>{t('currency.thb')}</span>
-                        </div>
-                        {currency === 'THB' && (
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleCurrencySelect('IDR')}
-                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
-                          currency === 'IDR' 
-                            ? 'bg-gray-100 text-gray-900' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-semibold">Rp</span>
-                          <span>{t('currency.idr')}</span>
-                        </div>
-                        {currency === 'IDR' && (
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Language Selector */}
-                <div className="relative" ref={languageMenuRef}>
-                  <button 
-                    onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                    className="p-2 rounded-full hover:bg-gray-200 transition-colors flex items-center gap-1"
-                  >
-                    <svg
-                      className="w-4 h-4 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"
-                      />
-                    </svg>
-                    <span className="text-xs text-gray-600 hidden sm:block">
-                      {getLanguageDisplayName(language)}
-                    </span>
-                  </button>
-
-                  {/* Language Dropdown Menu */}
-                  {showLanguageMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                      <button
-                        onClick={() => handleLanguageSelect('en')}
-                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
-                          language === 'en' 
-                            ? 'bg-gray-100 text-gray-900' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <span>{t('lang.english')}</span>
-                        {language === 'en' && (
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleLanguageSelect('th')}
-                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
-                          language === 'th' 
-                            ? 'bg-gray-100 text-gray-900' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <span>{t('lang.thai')}</span>
-                        {language === 'th' && (
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleLanguageSelect('id')}
-                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
-                          language === 'id' 
-                            ? 'bg-gray-100 text-gray-900' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <span>{t('lang.indonesian')}</span>
-                        {language === 'id' && (
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* User Menu Button for non-authenticated users */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 p-2 rounded-full border border-gray-300 hover:shadow-md hover:bg-gray-200 transition-all duration-200"
-                  >
-                    <svg
-                      className="w-4 h-4 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 6h16M4 12h16M4 18h16"
-                      />
-                    </svg>
-                    <svg
-                      className="w-4 h-4 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                  </button>
-
-                  {/* Dropdown Menu for non-authenticated users */}
-                  {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                      <Link
-                        href="/auth/signin"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        {t('nav.sign_in')}
-                      </Link>
-                      <Link
-                        href="/auth/signup"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        {t('nav.sign_up')}
-                      </Link>
-                      <hr className="my-1" />
-                      <Link
-                        href="/become-provider"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        {t('nav.host_home')}
-                      </Link>
-                      <Link
-                        href="/experiences"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        {t('nav.host_experience')}
-                      </Link>
-                      <Link
-                        href="/help"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        {t('nav.help')}
-                      </Link>
-                    </div>
-                  )}
-                </div>
+                {/* Sign In and Sign Up buttons for non-authenticated users */}
+                <Link
+                  href="/auth/signin"
+                  className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                >
+                  {t('nav.sign_in')}
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-[#e4b778] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#d9a85c] transition-colors"
+                >
+                  {t('nav.sign_up')}
+                </Link>
               </div>
             )}
           </div>

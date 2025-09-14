@@ -27,8 +27,8 @@ const currencyConfig = {
 const translations = {
   en: {
     // Navigation
-    'nav.homes': 'Homes',
-    'nav.experiences': 'Experiences',
+    'nav.hotels': 'Hotels',
+    'nav.properties': 'Properties',
     'nav.become_provider': 'Become a Provider',
     'nav.sign_in': 'Sign in',
     'nav.sign_up': 'Sign up',
@@ -214,8 +214,8 @@ const translations = {
   },
   th: {
     // Navigation
-    'nav.homes': 'บ้าน',
-    'nav.experiences': 'ประสบการณ์',
+    'nav.hotels': 'โรงแรม',
+    'nav.properties': 'อสังหาริมทรัพย์',
     'nav.become_provider': 'เป็นผู้ให้บริการ',
     'nav.sign_in': 'เข้าสู่ระบบ',
     'nav.sign_up': 'สมัครสมาชิก',
@@ -401,8 +401,8 @@ const translations = {
   },
   id: {
     // Navigation
-    'nav.homes': 'Rumah',
-    'nav.experiences': 'Pengalaman',
+    'nav.hotels': 'Hotel',
+    'nav.properties': 'Properti',
     'nav.become_provider': 'Jadi Penyedia',
     'nav.sign_in': 'Masuk',
     'nav.sign_up': 'Daftar',
@@ -602,9 +602,11 @@ interface LanguageProviderProps {
 export function LanguageProvider({ children }: LanguageProviderProps) {
   const [language, setLanguageState] = useState<Language>('en')
   const [currency, setCurrencyState] = useState<Currency>('GBP')
+  const [isClient, setIsClient] = useState(false)
 
   // Load language and currency from localStorage on mount
   useEffect(() => {
+    setIsClient(true)
     const savedLanguage = localStorage.getItem('language') as Language
     const savedCurrency = localStorage.getItem('currency') as Currency
     

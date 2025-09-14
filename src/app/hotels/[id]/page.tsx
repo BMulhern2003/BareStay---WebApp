@@ -44,6 +44,42 @@ export default function HotelDetailPage() {
     return pricePerNight * nights
   }
 
+  // Helper function to translate amenity names
+  const translateAmenity = (amenityName: string) => {
+    const amenityMap: Record<string, string> = {
+      'WiFi': t('amenity.wifi'),
+      'Free WiFi': t('amenity.wifi'),
+      'Breakfast': t('amenity.breakfast'),
+      'Swimming Pool': t('amenity.pool'),
+      'Pool': t('amenity.pool'),
+      'Fitness Center': t('amenity.gym'),
+      'Gym': t('amenity.gym'),
+      'Spa': t('amenity.spa'),
+      'Spa & Wellness': t('amenity.spa'),
+      'Restaurant': t('amenity.restaurant'),
+      'Parking': t('amenity.parking'),
+      'Airport Shuttle': t('amenity.airport_shuttle'),
+      'Pet Friendly': t('amenity.pet_friendly'),
+      'Business Center': t('amenity.business_center'),
+      'Concierge': t('amenity.concierge'),
+      'Room Service': t('amenity.room_service'),
+      'Laundry Service': t('amenity.laundry'),
+      'Air Conditioning': t('amenity.ac'),
+      'AC': t('amenity.ac'),
+      'TV': t('amenity.tv'),
+      'Flat-screen TV': t('amenity.tv'),
+      'Minibar': t('amenity.minibar'),
+      'Safe': t('amenity.safe'),
+      'In-room Safe': t('amenity.safe'),
+      'Balcony': t('amenity.balcony'),
+      'Ocean View': t('amenity.ocean_view'),
+      'City View': t('amenity.city_view'),
+      'Garden View': t('amenity.garden_view'),
+    }
+    
+    return amenityMap[amenityName] || amenityName
+  }
+
   const handleDateRangeChange = (dates: [Date | null, Date | null] | null) => {
     if (dates) {
       const [start, end] = dates
@@ -253,7 +289,7 @@ export default function HotelDetailPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <span className="text-gray-900 font-medium">{amenity.name}</span>
+                    <span className="text-gray-900 font-medium">{translateAmenity(amenity.name)}</span>
                   </div>
                 ))}
               </div>
